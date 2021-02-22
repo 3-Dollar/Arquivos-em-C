@@ -1,0 +1,106 @@
+#include <locale.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <windows.h>
+
+int main(){
+
+    setlocale(LC_ALL,"");
+    printf("O programa esta em %s\n",setlocale(LC_ALL,""));
+
+    SetConsoleTitle("Registro de Produtos");
+
+    int i=1;
+    char op, *result, str[100];
+
+    struct Produto{
+    char nome[150];
+    char code[10];
+    char descrit[500];
+
+    };
+    struct Produto produto[50];
+
+    FILE *prod;
+    //pastas
+
+    //diretory
+    int createD = mkdir("Arquivos");
+    if(createD != -1){
+        CreateDirectory("Arquivos", NULL);
+    }
+    //arquivo
+    prod = fopen("Arquivos/Produtos.txt", "w");
+    if(prod != NULL){
+        CreateFile("Arquivos/Produtos.txt",GENERIC_READ, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+    }else{
+        printf("Erro ao criar arquivo");
+    }
+
+    //pastas fimm
+
+    do{
+        do{
+            //in
+            printf("Registrar codigo de Produto\n");
+            printf("Insira o Codigo do produto:");
+            scanf(" %s",&produto[i].code);
+            fflush(stdin);
+            printf("Insira o Nome do produto:");
+            scanf(" %[^\n]s",&produto[i].nome);
+            fflush(stdin);
+            printf("Adicionar descrição?");
+            scanf(" %c", &op);
+            fflush(stdin);
+
+            if(op == 's'){
+                printf("Insira descrição do produto:");
+                scanf(" %[^\n]s",&produto[i].descrit);
+                fflush(stdin);
+            }
+
+            //concatenação
+            strcpy(str,"");
+            strcat(str,"Codigo(");
+            strcat(str,produto[i].code);
+            strcat(str,")-");
+            strcat(str,"Nome:");
+            strcat(str,produto[i].nome);
+            strcat(str,"--");
+            strcat(str,"Descricao:");
+            strcat(str,produto[i].descrit);
+            //out
+            printf("\nA informacao:\n%s",str);
+            //back
+            printf("\nAlterar informação?");
+            scanf("%c",&op);
+            fflush(stdin);
+        }while(op == 's');
+
+        strcat(str,"\n");
+
+        result = fputs(str, prod);
+
+        if(result == EOF){
+            printf("Erro na gravação");
+        }
+
+        sleep(2);
+        system("cls");
+
+
+        //back(new production)
+        printf("Gravar outro produto?");
+        scanf("%c",&op);
+        fflush(stdin);
+        i++;
+        
+
+    }while(op == 's');
+
+    fclose(prod);
+    
+    return 0;
+}
