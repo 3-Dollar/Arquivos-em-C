@@ -1,0 +1,164 @@
+#include <locale.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <windows.h>
+
+int main(){
+
+    setlocale(LC_ALL,"");
+    printf("O programa esta em %s\n",setlocale(LC_ALL,""));
+
+    SetConsoleTitle("Registro de Produtos");
+
+    int i=1,o;
+    char op[5], *result, str[100],leitura[8000];
+
+    struct Produto{
+    char nome[150];
+    char code[10];
+    char descrit[500];
+    char preso[5];
+
+    };
+    struct Produto produto[50];
+
+    FILE *prod;
+    //pastas
+
+    //diretory
+    int createD = mkdir("Arquivos");
+    if(createD != -1){
+        CreateDirectory("Arquivos", NULL);
+    }
+    //arquivo
+    prod = fopen("Arquivos/Produtos.txt", "w");
+    if(prod != NULL){
+        CreateFile("Arquivos/Produtos.txt",GENERIC_READ, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+    }else{
+        printf("Erro ao criar arquivo");
+    }
+
+    //pastas fimm
+    do{
+        //criar um organizador da lista de produtos pelo codigo(telvez seja tão dificl que n compense fazer)
+        //trasformar o preço do produto que esta sendo lido em char (pq strcat so aceita char) em inteiro e fazer um caixa para somas
+        //coloca uma calculadora para o caixa
+        //criar menu de atendimento e gerencia do caixa
+
+        printf("1-Registrar Produto\n");
+        printf("2-Produtos Registrados\n");
+        printf("3-Fechar Programa\n");
+        scanf("%d",&o);
+
+        switch(o){
+        case 1:
+            do{
+                do{
+                    //estrada 
+                    printf("-------Registrar codigo de Produto------\n");
+                    printf("Insira o Codigo do produto:");
+                    scanf(" %[^\n]s",&produto[i].code);
+                    fflush(stdin);
+                    printf("Insira o Nome do produto:");
+                    scanf(" %[^\n]s",&produto[i].nome);
+                    fflush(stdin);
+                    printf("Insira o preco do produto:");
+                    scanf(" %[^\n]s",&produto[i].preso);
+                    fflush(stdin);
+                    printf("Adicionar descrição?");
+                    scanf(" %[^\n]s", &op[2]);
+                    fflush(stdin);
+
+                    if(op[2] == 's'){
+                        printf("Insira descrição do produto:");
+                        scanf(" %[^\n]s",&produto[i].descrit);
+                        fflush(stdin);
+                    }
+
+                    //limpa string
+                    strcpy(str,"");
+
+                    //concatenação
+                    strcat(str,"Codigo(");
+                    strcat(str,produto[i].code);
+                    strcat(str,")-");
+                    strcat(str,"Nome:");
+                    strcat(str,produto[i].nome);
+                    strcat(str,"-");
+                    strcat(str,"Preco:");
+                    strcat(str,produto[i].preso);
+                    strcat(str,"-");
+                    strcat(str,"Descricao:");
+                    strcat(str,produto[i].descrit);
+
+                    //confirmação
+                    printf("\nA informacao:\n%s",str);
+                    //primeira volta
+                    printf("\nAlterar informação?");
+                    scanf("%c",&op[1]);
+                    fflush(stdin);
+                }while(op[1] == 's');
+
+                sleep(1);
+                system("cls");
+
+                //nova linha
+                printf("Gravar outro produto?");
+                scanf("%c",&op[0]);
+                fflush(stdin);
+
+                if(op[0] == 's'){
+                    // incrementa o numero da linha
+                    i++;
+                    //pula linha no arquivo
+                    strcat(str,"\n");
+                }
+                //coloca no arquivo
+                result = fputs(str, prod);
+
+                if(result == EOF){
+                    printf("Erro na gravação");
+                }
+
+            }while(op[0] == 's');
+            //fecha arquivo
+            fclose(prod);
+        break;
+
+        case 2:
+            printf("acessando lista\N");
+            sleep(1);
+
+            prod = fopen("Arquivos/Produtos.txt", "r");
+            
+            if(prod == NULL){
+                printf("Impossivel Localizar lista de Produtos\n");
+            }
+
+            //fscanf(Nome do ponteiro da pasta, tipo de leitura de variavel, variavel que vai ser armazenado as coisas)
+            fscanf(prod,"%[^\n]", &leitura);
+            
+            //exibe na tela(incopleto)
+            //fazer leitura ate um certo ponto (25 linhas), limpar tela e exibir mais 25
+            //fazer leitura por filtro como nome ou codigo(trabalhondo com string(Em aprendizagem))
+            printf("%s\n",leitura);
+            //(Ideai)switch case de alterar informação e talvez mais coisas
+            fclose(prod);
+
+        break;
+
+        case 3 :
+            return 0;
+        break;
+
+        default:
+            printf("--------Op Invalida--------");
+        break;
+        }
+
+    }while(1);
+
+    return 0;
+}
